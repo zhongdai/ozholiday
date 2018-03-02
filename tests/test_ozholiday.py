@@ -2,24 +2,29 @@
 # -*- coding: utf-8 -*-
 
 """Tests for `ozholiday` package."""
-
+from datetime import date, datetime
 import pytest
+from ozholiday import isholiday
 
 
-from ozholiday import ozholiday
 
 
-@pytest.fixture
-def response():
-    """Sample pytest fixture.
+def test_not_a_holiday():
+    assert not isholiday('20170105')
 
-    See more at: http://doc.pytest.org/en/latest/fixture.html
-    """
-    # import requests
-    # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
+def test_not_a_holiday_withdetail():
+    assert not isholiday('20170105', detail=True)
 
+def test_new_years_day():
+    assert isholiday('20180101')
 
-def test_content(response):
-    """Sample pytest test function with the pytest fixture as an argument."""
-    # from bs4 import BeautifulSoup
-    # assert 'GitHub' in BeautifulSoup(response.content).title.string
+def test_new_years_day_with_detail():
+    assert isinstance(isholiday('20180101',detail=True), dict)
+
+def test_new_years_day_with_detail_1():
+    r = isholiday('20180101',detail=True)
+    assert "New Year's Day" == r['Holiday Name']
+
+def test_not_in_range():
+    with pytest.raises(ValueError):
+        r = isholiday('20991212')

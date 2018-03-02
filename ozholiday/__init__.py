@@ -5,3 +5,5 @@
 __author__ = """Zhong Dai"""
 __email__ = 'zhongdai.au@gmail.com'
 __version__ = '0.1.0'
+
+from .ozholiday import isholiday
