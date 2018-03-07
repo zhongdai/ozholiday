@@ -5,6 +5,8 @@ A simple function to check a given date a public holiday or not in Australia, re
 - Use the data from [data.gov.au](https://data.gov.au/dataset/australian-holidays-machine-readable-dataset)
 - Only use Python standard libraries
 - Only one function - keep it simple
+- Save a `json` file to local, and get a new file if the cached file is more than 180 old
+> Search `HOME` or `USERPROFILE` (for Windows), if not found, create on current direct `./`
 
 ## Installation
 ```bash
