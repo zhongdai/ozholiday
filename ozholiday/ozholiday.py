@@ -4,15 +4,50 @@
 from datetime import date, datetime
 from urllib import request
 import json
+import logging
+import os
 
 
 API_URL = "https://data.gov.au/api/3/action/datastore_search?resource_id=31eec35e-1de6-4f04-9703-9be1d43d405b"
 INFO_URL = "https://data.gov.au/dataset/australian-holidays-machine-readable-dataset"
 
+HOMEFOLDER = os.environ.get('HOME',None) or os.environ.get('USERPROFILE', None) or './'
+CACHE_FILE = os.path.join(HOMEFOLDER, '.ozholiday.json')
+
+
+def _days_to_now(filename):
+    """Calculate the days to now for a existing file
+    """
+    ts = os.path.getmtime(filename)
+    today = datetime.today()
+    time_delta = today - datetime.fromtimestamp(ts)
+    return time_delta.days
 
 def _build_list():
+    """Get the file from cache or from web
+    """
+    if not os.path.isfile(CACHE_FILE) or _days_to_now(CACHE_FILE) > 180:
+        obj_json = _build_list_from_web()
+        try:
+            os.remove(CACHE_FILE)
+        except:
+            pass
+
+        with open(CACHE_FILE,'w') as fp:
+            logging.info("Writting to cache file")
+            json.dump(obj_json, fp)
+    else:
+        # file exist and less than half year
+        with open(CACHE_FILE,'r') as fp:
+            obj_json = json.load(fp)
+
+    return obj_json
+
+
+def _build_list_from_web():
     """Return the list of holidays"""
     with request.urlopen(API_URL) as f:
+        logging.info("Getting file from web ...")
         data = f.read().decode('utf-8')
     
     json_obj = json.loads(data)
